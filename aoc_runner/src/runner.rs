@@ -5,7 +5,10 @@ use crate::{
 };
 use aoc_runner_core::{inventory, Solution};
 use itertools::Itertools;
-use std::path::{Path, PathBuf};
+use std::{
+    fs,
+    path::{Path, PathBuf},
+};
 
 type DynSolution = &'static (dyn Solution + Sync);
 
@@ -107,7 +110,7 @@ impl Runner {
         }
 
         let input_path = self.input_path(year, day);
-        let input = std::fs::read(input_path.clone()).map_err(|err| RunnerError::IoError {
+        let input = fs::read_to_string(input_path.clone()).map_err(|err| RunnerError::IoError {
             path: Path::new(&input_path).to_path_buf(),
             err,
         })?;

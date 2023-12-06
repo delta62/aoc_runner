@@ -32,7 +32,7 @@ pub trait Solution {
 
     /// Attempt to solve for the given input, returning the result along with
     /// timing metrics related to each phase of the solution
-    fn solve(&self, input: &[u8]) -> PuzzleAnswer;
+    fn solve(&self, input: &str) -> PuzzleAnswer;
 }
 
 inventory::collect!(&'static (dyn Solution + Sync));
@@ -53,7 +53,7 @@ where
         self.part()
     }
 
-    fn solve(&self, input: &[u8]) -> PuzzleAnswer {
+    fn solve(&self, input: &str) -> PuzzleAnswer {
         let start_time = Instant::now();
 
         let input = <T as PuzzleSolution>::Input::parse(input);
