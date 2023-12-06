@@ -1,18 +1,19 @@
+use ureq::Agent;
+
 use crate::error::{RunnerError, RunnerResult};
-use reqwest::{blocking::Client, StatusCode};
 use std::{fs, path::Path};
 
 pub struct Downloader {
-    client: Client,
+    agent: Agent,
     session_token: String,
 }
 
 impl Downloader {
     pub fn new(session_token: impl Into<String>) -> Self {
-        let client = Client::new();
+        let agent = Agent::new();
         let session_token = session_token.into();
         Self {
-            client,
+            agent,
             session_token,
         }
     }
@@ -21,21 +22,25 @@ impl Downloader {
         let url = format!("https://adventofcode.com/{year}/day/{day}/input");
         let session_token = &self.session_token;
         let response = self
-            .client
-            .get(url)
-            .header("Cookie", format!("session={session_token}"))
-            .send()
+            .agent
+            .get(&url)
+            .set("Cookie", &format!("session={session_token}"))
+            .call()
             .map_err(RunnerError::DownloadError)?;
 
         match response.status() {
-            StatusCode::OK => self.save_to_file(
-                &response.bytes().map_err(RunnerError::DownloadError)?,
-                day,
-                out_dir,
-            ),
-            _status => {
-                todo!("Received unexpected status code")
+            200 => {
+                let mut bytes = Vec::new();
+                response
+                    .into_reader()
+                    .read_to_end(&mut bytes)
+                    .map_err(|err| RunnerError::IoError {
+                        path: Path::new(&url).to_path_buf(),
+                        err,
+                    })?;
+                self.save_to_file(&bytes, day, out_dir)
             }
+            _status => todo!("Received unexpected status code"),
         }
     }
 
