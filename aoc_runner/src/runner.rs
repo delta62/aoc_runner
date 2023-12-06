@@ -92,9 +92,9 @@ impl Runner {
             let already_have_input = Path::new(&input_path).exists();
 
             if !already_have_input {
-                None
-            } else {
                 Some(downloader)
+            } else {
+                None
             }
         })
     }
