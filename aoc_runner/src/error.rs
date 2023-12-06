@@ -1,8 +1,8 @@
-use std::{error::Error, fmt::Display, io};
+use std::{error::Error, fmt::Display, io, path::PathBuf};
 
 #[derive(Debug)]
 pub enum RunnerError {
-    IoError(io::Error),
+    IoError { path: PathBuf, err: io::Error },
     DownloadError(reqwest::Error),
 }
 
@@ -11,7 +11,7 @@ impl Display for RunnerError {
         use RunnerError::*;
 
         match self {
-            IoError(err) => write!(f, "I/O error: {err}"),
+            IoError { path, err } => write!(f, "I/O error at {path:?}: {err}"),
             DownloadError(err) => write!(f, "Error downloading input: {err}"),
         }
     }

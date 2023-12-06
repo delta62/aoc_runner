@@ -106,7 +106,11 @@ impl Runner {
             downloader.fetch(year, day, &out_dir)?;
         }
 
-        let input = std::fs::read(self.input_path(year, day)).map_err(RunnerError::IoError)?;
+        let input_path = self.input_path(year, day);
+        let input = std::fs::read(input_path.clone()).map_err(|err| RunnerError::IoError {
+            path: Path::new(&input_path).to_path_buf(),
+            err,
+        })?;
         let results = self
             .solutions
             .iter()

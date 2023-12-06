@@ -41,9 +41,15 @@ impl Downloader {
 
     fn save_to_file(&self, bytes: &[u8], day: u8, out_dir: impl AsRef<Path>) -> RunnerResult<()> {
         let out_dir = out_dir.as_ref();
-        fs::create_dir_all(out_dir).map_err(RunnerError::IoError)?;
+        fs::create_dir_all(out_dir).map_err(|err| RunnerError::IoError {
+            path: out_dir.to_path_buf(),
+            err,
+        })?;
 
         let out_file = out_dir.join(format!("day{day:02}.txt"));
-        fs::write(out_file, bytes).map_err(RunnerError::IoError)
+        fs::write(out_file, bytes).map_err(|err| RunnerError::IoError {
+            path: out_dir.to_path_buf(),
+            err,
+        })
     }
 }
