@@ -102,7 +102,7 @@ impl Runner {
         })
     }
 
-    fn run_day(&self, year: u16, day: u8) -> RunnerResult<()> {
+    pub fn run_day(&self, year: u16, day: u8) -> RunnerResult<()> {
         if let Some(downloader) = self.downloader_opt(year, day) {
             let base = self.input_path.to_str().unwrap();
             let out_dir = format!("{base}/{year}");
