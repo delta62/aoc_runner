@@ -25,6 +25,12 @@ pub trait Reporter {
 /// A text reporter which writes to stdout
 pub struct DefaultReporter;
 
+impl Default for DefaultReporter {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl DefaultReporter {
     pub fn new() -> Self {
         Self {}

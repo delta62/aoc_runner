@@ -25,7 +25,13 @@ pub struct Runner {
     downloader: Option<Downloader>,
     input_path: PathBuf,
     reporter: Box<dyn Reporter>,
-    solutions: Vec<Box<DynSolution>>,
+    solutions: Vec<DynSolution>,
+}
+
+impl Default for Runner {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Runner {
@@ -38,7 +44,7 @@ impl Runner {
 
         let mut solutions: Vec<_> = inventory::iter::<DynSolution>
             .into_iter()
-            .map(|solution| Box::new(*solution))
+            .copied()
             .collect();
 
         solutions.sort_by(|a, b| {
@@ -106,7 +112,7 @@ impl Runner {
         if let Some(downloader) = self.downloader_opt(year, day) {
             let base = self.input_path.to_str().unwrap();
             let out_dir = format!("{base}/{year}");
-            downloader.fetch(year, day, &out_dir)?;
+            downloader.fetch(year, day, out_dir)?;
         }
 
         let input_path = self.input_path(year, day);

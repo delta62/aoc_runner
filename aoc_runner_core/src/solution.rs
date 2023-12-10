@@ -95,5 +95,5 @@ pub trait PuzzleSolution {
     fn part(&self) -> u8;
 
     /// Attempt to solve for the given input
-    fn solve<'i>(&self, input: Self::Input<'i>) -> Self::Output;
+    fn solve(&self, input: Self::Input<'_>) -> Self::Output;
 }

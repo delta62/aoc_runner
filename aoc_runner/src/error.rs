@@ -3,7 +3,7 @@ use std::{error::Error, fmt::Display, io, path::PathBuf};
 #[derive(Debug)]
 pub enum RunnerError {
     IoError { path: PathBuf, err: io::Error },
-    DownloadError(ureq::Error),
+    DownloadError(Box<ureq::Error>),
 }
 
 impl Display for RunnerError {

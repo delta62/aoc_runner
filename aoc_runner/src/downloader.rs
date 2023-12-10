@@ -26,7 +26,7 @@ impl Downloader {
             .get(&url)
             .set("Cookie", &format!("session={session_token}"))
             .call()
-            .map_err(RunnerError::DownloadError)?;
+            .map_err(|err| RunnerError::DownloadError(Box::new(err)))?;
 
         match response.status() {
             200 => {

@@ -1,10 +1,10 @@
 use crate::{args::AocAttribute, solution_fn::SolutionFunction};
 use proc_macro::TokenStream;
-use proc_macro2::Span;
+use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::{format_ident, quote};
 use syn::{parse_macro_input, GenericParam, Generics, ImplItemType, Lifetime, LifetimeParam};
 
-pub fn aoc(attr: TokenStream, mut item: TokenStream) -> TokenStream {
+pub fn aoc(attr: TokenStream, item: TokenStream) -> TokenStream {
     let answer = parse_macro_input!(attr as AocAttribute);
     let day = answer.day;
     let part = answer.part;
@@ -69,13 +69,18 @@ pub fn aoc(attr: TokenStream, mut item: TokenStream) -> TokenStream {
         }
     };
 
+    let item = TokenStream2::from(item);
+    let item = quote! {
+        #[allow(clippy::needless_lifetimes)]
+        #item
+    };
+
     let expanded = quote! {
+        #item
         #solution_struct
         #solution_impl
         #solution_collection_struct
     };
 
-    item.extend(TokenStream::from(expanded));
-
-    item
+    expanded.into()
 }

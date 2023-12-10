@@ -1,4 +1,5 @@
-use crate::error::Result;
+use crate::{error::Result, PuzzleError};
+use std::error::Error;
 
 /// A value which can be returned from an Advent of Code solver function
 pub trait SolutionOutput {
@@ -20,11 +21,13 @@ macro_rules! output_str {
 
 output_str![&str, String, u8, i8, u16, i16, u32, i32, u64, i64, u128, i128, usize, isize];
 
-impl<T> SolutionOutput for Result<T>
+impl<T, E> SolutionOutput for std::result::Result<T, E>
 where
     T: ToString,
+    E: Error,
 {
     fn to_string(self) -> Result<String> {
         self.map(|x| x.to_string())
+            .map_err(|e| PuzzleError::SolutionError(format!("Error while running solution: {e}")))
     }
 }
