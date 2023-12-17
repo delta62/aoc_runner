@@ -17,6 +17,11 @@ where
     T: PuzzleInput<'a>,
 {
     fn parse(input: &'a str) -> Result<Self> {
-        input.lines().map(|line| T::parse(line)).try_collect()
+        let mut ret = Vec::new();
+        for line in input.lines() {
+            ret.push(T::parse(line)?);
+        }
+
+        Ok(ret)
     }
 }

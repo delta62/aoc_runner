@@ -153,12 +153,18 @@ impl Runner {
             self.reporter.report_no_solutions();
             Ok(())
         } else {
-            self.solutions
+            let results = self
+                .solutions
                 .iter()
                 .map(|s| (s.year(), s.day()))
                 .unique()
-                .map(|(year, day)| self.run_day(year, day))
-                .try_collect()
+                .map(|(year, day)| self.run_day(year, day));
+
+            for result in results {
+                result?;
+            }
+
+            Ok(())
         }
     }
 }
